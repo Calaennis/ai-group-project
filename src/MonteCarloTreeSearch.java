@@ -58,7 +58,7 @@ public class MonteCarloTreeSearch {
 	public Node selection () {
 		Node node = root;
 		
-		while (node.hasChildren()) {
+		while (node.hasChildren() && !node.isTerminal()) {
 			node = childWithMaxUcb1(node);
 		}
 		
@@ -107,7 +107,7 @@ public class MonteCarloTreeSearch {
 	}
 	
 	public Node childWithMaxUcb1 (Node node) {
-		double ucb = -100f;
+		double ucb = Double.NEGATIVE_INFINITY;
 		int index = 0;
 		
 		for (int i = 0; i < node.size(); i++) {

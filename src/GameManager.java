@@ -46,7 +46,7 @@ public class GameManager {
 			player.takeDamage(player.getMaxHp() / 2);
 			
 			if (!checkGameOver()) {
-				player.addExp(player.getLevel());
+				player.addExp(player.getLevel() + 1);
 			}
 			
 			break;
@@ -55,7 +55,7 @@ public class GameManager {
 			player.takeDamage(3 * (player.getMaxHp() / 4));
 
 			if (!checkGameOver()) {
-				player.addExp(player.getLevel());
+				player.addExp(player.getLevel() + 2);
 			}
 			
 			break;
@@ -64,7 +64,7 @@ public class GameManager {
 			player.takeDamage(player.getMaxHp() - 1);
 
 			if (!checkGameOver()) {
-				player.addExp(player.getLevel());
+				player.addExp(player.getLevel() + 3);
 			}
 			
 			break;
