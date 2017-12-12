@@ -10,9 +10,27 @@ public class MonteCarloTreeSearch {
 	public static void main (String[] args) {
 		MonteCarloTreeSearch mcts = new MonteCarloTreeSearch();
 		mcts.populate();
-		mcts.print();
+		//mcts.print();
+		mcts.playOptimalGame();
 	}
 
+	public void playOptimalGame () {
+		gameManager.newGame(playerName);
+		Node currentPosition = root;
+		
+		while (!gameManager.gameOver()) {
+			Action action = chooseOptimalAction(currentPosition);
+			System.out.println("Action: " + action.toString());
+			gameManager.performAction(action);
+		}
+		
+		System.out.println(gameManager.playerWon() ? "Bot wins!" : "Bot loses...");
+	}
+	
+	public Action chooseOptimalAction (Node node) {
+		return null;
+	}
+	
 	public void populate () {
 		gameManager = new GameManager();
 		root = new Node(null, null);
@@ -57,7 +75,7 @@ public class MonteCarloTreeSearch {
 	}
 	
 	public void backpropagation (Node node, double score) {
-		while (node.getParent() != null) {
+		while (node != null) {
 			node.incrementVisitCount();
 			node.setWinScore(score);
 			node = node.getParent();
@@ -69,8 +87,15 @@ public class MonteCarloTreeSearch {
 			if (node.isTerminal()) {
 				return gameManager.playerWon() ? 1 : -1;
 			}
-			Action action = Action.getRandomAction();
-			node = simulate(action, node);
+			if (gameManager.isFinalDay()) {
+				gameManager.fightBoss();
+				node = new Node(node, Action.getBossAction(gameManager.getPlayer().getLevel()));
+				node.setTerminal(gameManager.gameOver());
+			}
+			else {
+				Action action = Action.getRandomAction();
+				node = simulate(action, node);
+			}
 		}
 	}
 	
@@ -87,6 +112,10 @@ public class MonteCarloTreeSearch {
 		
 		for (int i = 0; i < node.size(); i++) {
 			Node child = node.getChildren().get(i);
+			
+			if (child.getVisitCount() == 0) {
+				return child;
+			}
 			
 			double temp = child.getWinScore() + 2 * (Math.log(node.getVisitCount() / child.getVisitCount()));
 			if (temp > ucb) {

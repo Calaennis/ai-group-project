@@ -15,6 +15,7 @@ public class GameManager {
 		currentDay = 1;
 		finalDay = Settings.DAY_LIMIT;
 		bossDefeated = false;
+		System.out.println("Starting a new game!");
 	}
 	
 	public boolean gameOver () {
@@ -69,6 +70,10 @@ public class GameManager {
 		if (!player.isDead()) {
 			bossDefeated = true;
 		}
+	}
+	
+	public boolean isFinalDay () {
+		return currentDay == finalDay;
 	}
 	
 	public int getCurrentDay () {
