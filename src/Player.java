@@ -16,7 +16,7 @@ public class Player {
 	}
 	
 	private void initialize () {
-		exp = Settings.EXP_FUNCTION.apply(level - 1);
+		exp = 0;
 		setNextLevelExp();
 		
 		setMaxHp();
