@@ -6,11 +6,17 @@ public class Node {
     private double winScore;
     private int visitCount;
     private List<Node> children;
+    private Action action;
+    private boolean terminal;
+    private Node parent;
 
-    public Node () {
+    public Node (Node parent, Action action) {
         children = new ArrayList<>();
         winScore = 0.0;
         visitCount = 0;
+        this.action = action;
+        this.parent = parent;
+        terminal = false;
     }
 
     public double getWinScore () {
@@ -24,9 +30,37 @@ public class Node {
     public List<Node> getChildren () {
         return children;
     }
+    
+    public boolean isTerminal () {
+    	return terminal;
+    }
+    
+    public Action getAction () {
+    	return action;
+    }
+    
+    public Node getParent () {
+    	return parent;
+    }
+    
+    public void setTerminal (boolean terminal) {
+    	this.terminal = terminal;
+    }
+    
+    public void setChildren (List<Node> children) {
+    	this.children = children;
+    }
+    
+    public boolean hasChildren () {
+    	return children.size() > 0;
+    }
+    
+    public int size () {
+    	return children.size();
+    }
 
     public void setWinScore (double winScore) {
-        this.winScore = winScore;
+    	this.winScore = (this.winScore + winScore) / visitCount;
     }
 
     public void incrementVisitCount () {
@@ -36,9 +70,9 @@ public class Node {
     public void addChildren () {
 
     }
-
+    
     public void simulatePlaythrough () {
-
+    	
     }
 
     public Node getRandomChildNode () {
