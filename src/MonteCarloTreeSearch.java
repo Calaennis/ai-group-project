@@ -6,7 +6,13 @@ public class MonteCarloTreeSearch {
 	private String playerName = "AI BOT 4000";
 	private int trials = 10000;
 	private Node root;
-	
+
+	public static void main (String[] args) {
+		MonteCarloTreeSearch mcts = new MonteCarloTreeSearch();
+		mcts.populate();
+		mcts.print();
+	}
+
 	public void populate () {
 		gameManager = new GameManager();
 		root = new Node(null, null);
@@ -90,5 +96,9 @@ public class MonteCarloTreeSearch {
 		}
 		
 		return node.getChildren().get(index);
+	}
+
+	public void print () {
+		System.out.println(root);
 	}
 }

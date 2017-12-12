@@ -81,4 +81,13 @@ public class Node {
         }
         return null;
     }
+
+    @Override
+    public String toString () {
+        String str =String.format("WS: %f\nVC: %d\n#C: %d", winScore, visitCount, children.size());
+        for (Node child : children) {
+            str += child.toString();
+        }
+        return str;
+    }
 }
