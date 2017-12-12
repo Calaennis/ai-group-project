@@ -5,6 +5,7 @@ public class GameManager {
 	private int finalDay;
 	private Player player;
 	private boolean bossDefeated;
+	private boolean gameOver;
 	
 	public GameManager () {
 		newGame("");
@@ -19,11 +20,11 @@ public class GameManager {
 	}
 	
 	public boolean gameOver () {
-		return player.isDead() || bossDefeated;
+		return gameOver;
 	}
 	
 	public boolean playerWon () {
-		return !player.isDead() && bossDefeated;
+		return gameOver && bossDefeated;
 	}
 	
 	public void performAction (Action action) {
@@ -34,26 +35,43 @@ public class GameManager {
 			
 		case SAME_LEVEL:
 			player.takeDamage(player.getMaxHp() / 4);
-			player.addExp(player.getLevel());
+			
+			if (!checkGameOver()) {
+				player.addExp(player.getLevel());
+			}
+			
 			break;
 			
 		case ONE_HIGHER:
 			player.takeDamage(player.getMaxHp() / 2);
-			player.addExp(player.getLevel() + 1);
+			
+			if (!checkGameOver()) {
+				player.addExp(player.getLevel());
+			}
+			
 			break;
 			
 		case TWO_HIGHER:
 			player.takeDamage(3 * (player.getMaxHp() / 4));
-			player.addExp(player.getLevel() + 2);
+
+			if (!checkGameOver()) {
+				player.addExp(player.getLevel());
+			}
+			
 			break;
 			
 		case THREE_HIGHER:
 			player.takeDamage(player.getMaxHp() - 1);
-			player.addExp(player.getLevel() + 3);
+
+			if (!checkGameOver()) {
+				player.addExp(player.getLevel());
+			}
+			
 			break;
 			
 		case FOUR_OR_MORE_HIGHER:
 			player.takeDamage(player.getMaxHp());
+			checkGameOver();
 			break;
 			
 		case SLEEP:
@@ -94,5 +112,14 @@ public class GameManager {
 	
 	public boolean isBossDefeated () {
 		return bossDefeated;
+	}
+	
+	private boolean checkGameOver () {
+		if (player.isDead()) {
+			gameOver = true;
+			return true;
+		}
+		
+		return false;
 	}
 }

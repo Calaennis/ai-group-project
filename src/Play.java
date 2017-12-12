@@ -37,9 +37,9 @@ public class Play {
 			} while (! gameManager.gameOver());
 			
 			if (gameManager.playerWon()) {
-				System.out.println("You won!");
+				System.out.println("\nYou won!");
 			} else {
-				System.out.println("You lost...");
+				System.out.println("\nYou died...");
 			}
 			
 			
