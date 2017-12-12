@@ -22,10 +22,18 @@ public class Play {
 			gameManager.newGame(promptName());
 			// Game loop
 			do {
-				System.out.println("\f" + gameManager.getPlayer() + "\n");
-				printGameStatus();
-				Action action = promptAction();
-				gameManager.performAction(action);
+				if (!gameManager.isFinalDay()) {
+					System.out.println("\f" + gameManager.getPlayer() + "\n");
+					printGameStatus();
+					Action action = promptAction();
+					gameManager.performAction(action);
+				}
+				else {
+					System.out.println("The day has come... The Final Boss has arrived! Can you take him on?!");
+					System.out.println("BOSS LEVEL: " + Settings.BOSS_LEVEL);
+					System.out.println("YOUR LEVEL: " + gameManager.getPlayer().getLevel());
+					gameManager.fightBoss();
+				}
 			} while (! gameManager.gameOver());
 			
 			if (gameManager.playerWon()) {
