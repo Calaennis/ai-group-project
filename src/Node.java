@@ -59,8 +59,8 @@ public class Node {
     	return children.size();
     }
 
-    public void setWinScore (double winScore) {
-    	this.winScore = (this.winScore + winScore) / visitCount;
+    public void addWinScore (double winScore) {
+    	this.winScore += winScore;
     }
 
     public void incrementVisitCount () {

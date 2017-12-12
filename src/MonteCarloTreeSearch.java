@@ -77,7 +77,7 @@ public class MonteCarloTreeSearch {
 	public void backpropagation (Node node, double score) {
 		while (node != null) {
 			node.incrementVisitCount();
-			node.setWinScore(score);
+			node.addWinScore(score);
 			node = node.getParent();
 		}
 	}
@@ -117,7 +117,7 @@ public class MonteCarloTreeSearch {
 				return child;
 			}
 			
-			double temp = child.getWinScore() + 2 * (Math.log(node.getVisitCount() / child.getVisitCount()));
+			double temp = ucb1(node, child);
 			if (temp > ucb) {
 				ucb = temp;
 				index = i;
@@ -125,6 +125,11 @@ public class MonteCarloTreeSearch {
 		}
 		
 		return node.getChildren().get(index);
+	}
+	
+	public double ucb1 (Node parent, Node node) {
+		return node.getWinScore() / node.getVisitCount() +
+				2 * Math.sqrt(Math.log(parent.getVisitCount()) / node.getVisitCount());
 	}
 
 	public void print () {
