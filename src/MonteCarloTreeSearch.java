@@ -5,12 +5,12 @@ public class MonteCarloTreeSearch {
 	private GameManager gameManager;
 	private GameManager simulatedGame;
 	private String playerName = "AI BOT 4000";
-	private long thinkTime = 5000;
+	private long thinkTime = 2000;
 	
 	private double timeAliveMod = 1;
-	private double levelsGainedMod = 10;
+	private double levelsGainedMod = 25;
 	private double victoryMod = 100;
-	private double dayCountMod = 1;
+	private double dayCountMod = .2;
 
 	public static void main (String[] args) {
 		MonteCarloTreeSearch mcts = new MonteCarloTreeSearch();
@@ -25,11 +25,19 @@ public class MonteCarloTreeSearch {
 		gameManager.newGame(playerName);
 		
 		while (!gameManager.gameOver()) {
-			gameManager.printGameState();
-			Action action = findOptimalAction();
-			System.out.println("Action: " + action.toString());
-			gameManager.performAction(action);
-			System.out.println();
+			if (!gameManager.isFinalDay()) {
+				gameManager.printGameState();
+				Action action = findOptimalAction();
+				System.out.println("Action: " + action.toString());
+				gameManager.performAction(action);
+				System.out.println();
+			}
+			else {
+				System.out.println("Fighting boss...");
+				System.out.println("BOSS LEVEL: " + Settings.BOSS_LEVEL);
+				System.out.println("BOT LEVEL: " + gameManager.getPlayer().getLevel());
+				gameManager.fightBoss();
+			}
 		}
 		
 		System.out.println(gameManager.playerWon() ? "Bot wins!\n" : "Bot loses...\n");
@@ -62,25 +70,27 @@ public class MonteCarloTreeSearch {
 			simulatedGame = new GameManager(gameManager);
 			
 			Node node = selection(root);
-			if (!node.isTerminal()) {
-				double score = 0;
+			double score = 0;
 				
-				if (node.getVisitCount() == 0) {
-					score = rollout(node);
-				}
-				else {
-					node = expansion(node);
-					score = rollout(node);
-				}
-				
-				backpropagation(node, score);
+			if (node.getVisitCount() == 0) {
+				score = rollout(node);
 			}
+			else if (node.isTerminal()) {
+				score = rollout(node);
+			}
+			else {
+				node = expansion(node);
+				score = rollout(node);
+			}
+				
+			backpropagation(node, score);
 		}
 	}
 	
 	public Node selection (Node node) {
-		while (node.hasChildren() && !node.isTerminal()) {
+		while (node.hasChildren()) {
 			node = childWithMaxUcb1(node);
+			simulatedGame.performAction(node.getAction());
 		}
 		
 		return node;
@@ -88,10 +98,26 @@ public class MonteCarloTreeSearch {
 	
 	public Node expansion (Node node) {
 		List<Node> children = new ArrayList<>();
-		for (Action action : Action.getPossibleActions()) {
-			children.add(new Node(node, action));
+		
+		if (node.getDay() == simulatedGame.getFinalDay()) {
+			Node child = new Node(node, Action.getBossAction(simulatedGame.getPlayer().getLevel()));
+			child.setDay(simulatedGame.getCurrentDay());
+			children.add(child);
 		}
+		
+		else {
+			for (Action action : Action.getPossibleActions()) {
+				Node child = new Node(node, action);
+				GameManager gm = new GameManager(simulatedGame);
+				gm.performAction(action);
+				child.setDay(gm.getCurrentDay());
+				children.add(child);
+			}
+		}
+		
 		node.setChildren(children);
+		
+		simulatedGame.performAction(children.get(0).getAction());
 		return children.get(0);
 	}
 	
@@ -110,14 +136,27 @@ public class MonteCarloTreeSearch {
 		
 		while (true) {
 			if (node.isTerminal()) {
-				return timeAlive * timeAliveMod + levelsGained * levelsGainedMod + 
+				/*
+				double value = timeAlive * timeAliveMod + 
+						levelsGained * levelsGainedMod + 
+						(simulatedGame.playerWon() ? victoryMod : 0) + 
+						(simulatedGame.getCurrentDay()) * dayCountMod;
+				
+				if (value > 30) {
+					System.out.printf("TA: %d\nLG: %d\nValue: %f\n", timeAlive, levelsGained, value);
+					simulatedGame.printGameState();
+					System.out.println();
+				}
+				*/
+				return timeAlive * timeAliveMod + 
+						levelsGained * levelsGainedMod + 
 						(simulatedGame.playerWon() ? victoryMod : 0) + 
 						(simulatedGame.getCurrentDay()) * dayCountMod;
 			}
 			if (simulatedGame.isFinalDay()) {
 				simulatedGame.fightBoss();
 				node = new Node(node, Action.getBossAction(simulatedGame.getPlayer().getLevel()));
-				node.setTerminal(simulatedGame.gameOver());
+				node.setTerminal(true);
 			}
 			else {
 				Action action = Action.getRandomAction();

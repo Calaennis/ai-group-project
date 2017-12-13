@@ -10,6 +10,7 @@ public class Node {
     private boolean terminal;
     private Node parent;
     private int playerLevel;
+    private int day;
 
     public Node (Node parent, Action action) {
         children = new ArrayList<>();
@@ -46,6 +47,14 @@ public class Node {
     
     public int getPlayerLevel () {
     	return playerLevel;
+    }
+    
+    public int getDay () {
+    	return day;
+    }
+    
+    public void setDay (int day) {
+    	this.day = day;
     }
     
     public void setPlayerLevel (int level) {

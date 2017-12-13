@@ -137,5 +137,6 @@ public class GameManager {
 		System.out.println(player.toString());
 		System.out.println("Current Day: " + currentDay);
 		System.out.println("Game Over: " + gameOver);
+		System.out.println("Game won: " + playerWon());
 	}
 }
