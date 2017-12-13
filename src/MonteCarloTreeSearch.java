@@ -26,9 +26,39 @@ public class MonteCarloTreeSearch {
 		
 		while (!gameManager.gameOver()) {
 			if (!gameManager.isFinalDay()) {
-				gameManager.printGameState();
+				System.out.println("\f" + gameManager.getPlayer() + "\n");
+				System.out.printf("Current day: %d\nDays until the Boss arrives: %d\n\n", gameManager.getCurrentDay(), gameManager.getDaysRemaining());
 				Action action = findOptimalAction();
-				System.out.println("Action: " + action.toString());
+				
+				String chosenAction;
+				switch (action) {
+				case SAME_LEVEL:
+					chosenAction = "Fight enemy same level";
+					break;
+					
+				
+				case SAME_LEVEL:
+					chosenAction = "Fight enemy same level";
+					break;
+					
+				case SAME_LEVEL:
+					chosenAction = "Fight enemy same level";
+					break;
+					
+				case SAME_LEVEL:
+					chosenAction = "Fight enemy same level";
+					break;
+					
+				case SAME_LEVEL:
+					chosenAction = "Fight enemy same level";
+					break;
+					
+				default:
+					chosenAction = "not sure...";
+				}
+				
+				System.out.println("Chosen Action: " + chosenAction);
+				
 				gameManager.performAction(action);
 				System.out.println();
 			}
@@ -57,7 +87,7 @@ public class MonteCarloTreeSearch {
 				highestUcb = tempUcb;
 				index = i;
 			}
-			System.out.printf("%s: %f\n", root.getChildren().get(i).getAction().toString(), tempUcb);
+			//System.out.printf("%s: %f\n", root.getChildren().get(i).getAction().toString(), tempUcb);
 		}
 		
 		return root.getChildren().get(index).getAction();
