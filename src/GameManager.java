@@ -7,6 +7,14 @@ public class GameManager {
 	private boolean bossDefeated;
 	private boolean gameOver;
 	
+	public GameManager (GameManager other) {
+		currentDay = other.currentDay;
+		finalDay = other.finalDay;
+		player = new Player(other.player);
+		bossDefeated = other.bossDefeated;
+		gameOver = other.gameOver;
+	}
+	
 	public GameManager () {
 		newGame("");
 	}
@@ -16,7 +24,8 @@ public class GameManager {
 		currentDay = 1;
 		finalDay = Settings.DAY_LIMIT;
 		bossDefeated = false;
-		System.out.println("Starting a new game!");
+		gameOver = false;
+		//System.out.println("Starting a new game!");
 	}
 	
 	public boolean gameOver () {
@@ -87,6 +96,7 @@ public class GameManager {
 		
 		if (!player.isDead()) {
 			bossDefeated = true;
+			gameOver = true;
 		}
 	}
 	
@@ -121,5 +131,11 @@ public class GameManager {
 		}
 		
 		return false;
+	}
+	
+	public void printGameState () {
+		System.out.println(player.toString());
+		System.out.println("Current Day: " + currentDay);
+		System.out.println("Game Over: " + gameOver);
 	}
 }

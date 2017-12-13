@@ -30,4 +30,8 @@ public enum Action {
 		Action[] actions = Action.values();
 		return actions[new Random().nextInt(actions.length)];
 	}
+	
+	public static Action[] getPossibleActions () {
+		return new Action[] {SAME_LEVEL, ONE_HIGHER, TWO_HIGHER, THREE_HIGHER, SLEEP};
+	}
 }

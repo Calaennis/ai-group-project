@@ -9,6 +9,7 @@ public class Node {
     private Action action;
     private boolean terminal;
     private Node parent;
+    private int playerLevel;
 
     public Node (Node parent, Action action) {
         children = new ArrayList<>();
@@ -41,6 +42,14 @@ public class Node {
     
     public Node getParent () {
     	return parent;
+    }
+    
+    public int getPlayerLevel () {
+    	return playerLevel;
+    }
+    
+    public void setPlayerLevel (int level) {
+    	this.playerLevel = level;
     }
     
     public void setTerminal (boolean terminal) {

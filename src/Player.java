@@ -15,6 +15,15 @@ public class Player {
 		initialize();
 	}
 	
+	public Player (Player player) {
+		this.name = player.name;
+		this.level = player.level;
+		this.exp = player.exp;
+		this.nextLevelExp = player.nextLevelExp;
+		this.maxHp = player.maxHp;
+		this.currentHp = player.currentHp;
+	}
+	
 	private void initialize () {
 		exp = 0;
 		setNextLevelExp();
@@ -77,7 +86,7 @@ public class Player {
 	}
 	
 	private void levelUp () {
-		System.out.printf("%s has leveled up and is now level %d!\n\n", name, level + 1);
+		//System.out.printf("%s has leveled up and is now level %d!\n\n", name, level + 1);
 		// Increment the player's level
 		level += 1;
 		

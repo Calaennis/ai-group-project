@@ -3,42 +3,65 @@ import java.util.List;
 
 public class MonteCarloTreeSearch {
 	private GameManager gameManager;
+	private GameManager simulatedGame;
 	private String playerName = "AI BOT 4000";
-	private int trials = 10000;
-	private Node root;
+	private long thinkTime = 5000;
+	
+	private double timeAliveMod = 1;
+	private double levelsGainedMod = 10;
+	private double victoryMod = 100;
+	private double dayCountMod = 1;
 
 	public static void main (String[] args) {
 		MonteCarloTreeSearch mcts = new MonteCarloTreeSearch();
-		mcts.populate();
-		//mcts.print();
 		mcts.playOptimalGame();
 	}
 
+	public MonteCarloTreeSearch () {
+		gameManager = new GameManager();
+	}
+	
 	public void playOptimalGame () {
 		gameManager.newGame(playerName);
-		Node currentPosition = root;
 		
 		while (!gameManager.gameOver()) {
-			Action action = chooseOptimalAction(currentPosition);
+			gameManager.printGameState();
+			Action action = findOptimalAction();
 			System.out.println("Action: " + action.toString());
 			gameManager.performAction(action);
+			System.out.println();
 		}
 		
-		System.out.println(gameManager.playerWon() ? "Bot wins!" : "Bot loses...");
+		System.out.println(gameManager.playerWon() ? "Bot wins!\n" : "Bot loses...\n");
+		gameManager.printGameState();
 	}
 	
-	public Action chooseOptimalAction (Node node) {
-		return null;
-	}
-	
-	public void populate () {
-		gameManager = new GameManager();
-		root = new Node(null, null);
+	public Action findOptimalAction () {
+		Node root = new Node(null, null);
+		populate(root);
 		
-		for (int i = 0; i < trials; i++) {
-			gameManager.newGame(playerName);
+		double highestUcb = Double.NEGATIVE_INFINITY;
+		int index = 0;
+		
+		for (int i = 0; i < root.size(); i++) {
+			double tempUcb = ucb1(root, root.getChildren().get(i));
+			if (tempUcb > highestUcb) {
+				highestUcb = tempUcb;
+				index = i;
+			}
+			System.out.printf("%s: %f\n", root.getChildren().get(i).getAction().toString(), tempUcb);
+		}
+		
+		return root.getChildren().get(index).getAction();
+	}
+	
+	public void populate (Node root) {
+		long endTime = System.currentTimeMillis() + thinkTime;
+		
+		while (System.currentTimeMillis() < endTime) {
+			simulatedGame = new GameManager(gameManager);
 			
-			Node node = selection();
+			Node node = selection(root);
 			if (!node.isTerminal()) {
 				double score = 0;
 				
@@ -55,9 +78,7 @@ public class MonteCarloTreeSearch {
 		}
 	}
 	
-	public Node selection () {
-		Node node = root;
-		
+	public Node selection (Node node) {
 		while (node.hasChildren() && !node.isTerminal()) {
 			node = childWithMaxUcb1(node);
 		}
@@ -67,7 +88,7 @@ public class MonteCarloTreeSearch {
 	
 	public Node expansion (Node node) {
 		List<Node> children = new ArrayList<>();
-		for (Action action : Action.values()) {
+		for (Action action : Action.getPossibleActions()) {
 			children.add(new Node(node, action));
 		}
 		node.setChildren(children);
@@ -83,26 +104,42 @@ public class MonteCarloTreeSearch {
 	}
 	
 	public double rollout (Node node) {
+		int timeAlive = 0;
+		int levelsGained = 0;
+		int previousLevel = simulatedGame.getPlayer().getLevel();
+		
 		while (true) {
 			if (node.isTerminal()) {
-				return gameManager.playerWon() ? 1 : -1;
+				return timeAlive * timeAliveMod + levelsGained * levelsGainedMod + 
+						(simulatedGame.playerWon() ? victoryMod : 0) + 
+						(simulatedGame.getCurrentDay()) * dayCountMod;
 			}
-			if (gameManager.isFinalDay()) {
-				gameManager.fightBoss();
-				node = new Node(node, Action.getBossAction(gameManager.getPlayer().getLevel()));
-				node.setTerminal(gameManager.gameOver());
+			if (simulatedGame.isFinalDay()) {
+				simulatedGame.fightBoss();
+				node = new Node(node, Action.getBossAction(simulatedGame.getPlayer().getLevel()));
+				node.setTerminal(simulatedGame.gameOver());
 			}
 			else {
 				Action action = Action.getRandomAction();
 				node = simulate(action, node);
+			}
+			
+			if (!simulatedGame.gameOver()) {
+				int level = simulatedGame.getPlayer().getLevel();
+				timeAlive++;
+				if (level > previousLevel) {
+					levelsGained += level - previousLevel;;
+				}
+				
+				previousLevel = level;
 			}
 		}
 	}
 	
 	public Node simulate (Action action, Node node) {
 		Node newNode = new Node(node, action);
-		gameManager.performAction(action);
-		newNode.setTerminal(gameManager.gameOver());
+		simulatedGame.performAction(action);
+		newNode.setTerminal(simulatedGame.gameOver());
 		return newNode;
 	}
 	
@@ -130,9 +167,5 @@ public class MonteCarloTreeSearch {
 	public double ucb1 (Node parent, Node node) {
 		return node.getWinScore() / node.getVisitCount() +
 				2 * Math.sqrt(Math.log(parent.getVisitCount()) / node.getVisitCount());
-	}
-
-	public void print () {
-		System.out.println(root);
 	}
 }
