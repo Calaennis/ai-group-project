@@ -37,20 +37,20 @@ public class MonteCarloTreeSearch {
 					break;
 					
 				
-				case SAME_LEVEL:
-					chosenAction = "Fight enemy same level";
+				case ONE_HIGHER:
+					chosenAction = "Fight enemy one level higher";
 					break;
 					
-				case SAME_LEVEL:
-					chosenAction = "Fight enemy same level";
+				case TWO_HIGHER:
+					chosenAction = "Fight enemy two levels higher";
 					break;
 					
-				case SAME_LEVEL:
-					chosenAction = "Fight enemy same level";
+				case THREE_HIGHER:
+					chosenAction = "Fight enemy three levels higher";
 					break;
 					
-				case SAME_LEVEL:
-					chosenAction = "Fight enemy same level";
+				case SLEEP:
+					chosenAction = "Sleep";
 					break;
 					
 				default:
