@@ -27,3 +27,5 @@ Once you have a good understanding of how the game plays, you can have the bot a
 java MonteCarloTreeSearch
 
 In the current implementation, the bot has been able to reach the boss but not reach the level requirement to win. I believe it can be fixed with a better heuristic, which we've been playing around with but haven't found the right values.
+
+Important note: The algorithm will evaluate for 6 seconds before choosing an action. If you wish to change that, edit MonteCarloTreeSearch.java line 8. The time is in milliseconds. Then recompile everything.

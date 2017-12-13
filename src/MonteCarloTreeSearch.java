@@ -5,7 +5,7 @@ public class MonteCarloTreeSearch {
 	private GameManager gameManager;
 	private GameManager simulatedGame;
 	private String playerName = "AI BOT 4000";
-	private long thinkTime = 2000;
+	private long thinkTime = 6000;
 	
 	private double timeAliveMod = 1;
 	private double levelsGainedMod = 25;
